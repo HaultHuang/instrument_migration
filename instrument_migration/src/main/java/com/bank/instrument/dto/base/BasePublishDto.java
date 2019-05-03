@@ -1,7 +1,7 @@
 package com.bank.instrument.dto.base;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Base publish dto
@@ -17,9 +17,9 @@ public class BasePublishDto implements Serializable{
 
 	private String publishCode;
 
-	private Date lastTradingDate;
+	private LocalDate lastTradingDate;
 
-	private Date deliveryDate;
+	private LocalDate deliveryDate;
 
 	private String market;
 
@@ -56,28 +56,28 @@ public class BasePublishDto implements Serializable{
 	/**
 	 * @return the lastTradingDate
 	 */
-	public Date getLastTradingDate() {
+	public LocalDate getLastTradingDate() {
 		return lastTradingDate;
 	}
 
 	/**
 	 * @param lastTradingDate the lastTradingDate to set
 	 */
-	public void setLastTradingDate(Date lastTradingDate) {
+	public void setLastTradingDate(LocalDate lastTradingDate) {
 		this.lastTradingDate = lastTradingDate;
 	}
 
 	/**
 	 * @return the deliveryDate
 	 */
-	public Date getDeliveryDate() {
+	public LocalDate getDeliveryDate() {
 		return deliveryDate;
 	}
 
 	/**
 	 * @param deliveryDate the deliveryDate to set
 	 */
-	public void setDeliveryDate(Date deliveryDate) {
+	public void setDeliveryDate(LocalDate deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
 
