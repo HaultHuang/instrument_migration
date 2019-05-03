@@ -15,14 +15,14 @@ public class BasePublishDto implements Serializable{
 
 	private String instrumentCode;
 
-	private String publicCode;
-	
+	private String publishCode;
+
 	private Date lastTradingDate;
-	
+
 	private Date deliveryDate;
-	
+
 	private String market;
-	
+
 	private String label;
 
 	/**
@@ -40,17 +40,17 @@ public class BasePublishDto implements Serializable{
 	}
 
 	/**
-	 * @return the publicCode
+	 * @return the publishCode
 	 */
-	public String getPublicCode() {
-		return publicCode;
+	public String getPublishCode() {
+		return publishCode;
 	}
 
 	/**
-	 * @param publicCode the publicCode to set
+	 * @param publishCode the publishCode to set
 	 */
-	public void setPublicCode(String publicCode) {
-		this.publicCode = publicCode;
+	public void setPublishCode(String publishCode) {
+		this.publishCode = publishCode;
 	}
 
 	/**
