@@ -7,7 +7,7 @@ import com.bank.instrument.dto.InternalPublishDto;
 import com.bank.instrument.dto.base.BasePublishDto;
 import com.bank.instrument.rule.enums.MappingKeyEnum;
 
-public interface GapService {
+public interface InstrumentGapService {
 
 	void publish(BasePublishDto basePublishDto);
 

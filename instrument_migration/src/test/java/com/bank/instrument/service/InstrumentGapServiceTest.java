@@ -13,9 +13,9 @@ import org.junit.Test;
 import com.bank.instrument.dto.ExchangePublishDto;
 import com.bank.instrument.dto.PublishDto;
 import com.bank.instrument.rule.enums.MappingKeyEnum;
-import com.bank.instrument.service.impl.GapServiceIml;
+import com.bank.instrument.service.impl.InstrumentGapServiceIml;
 
-public class GapServiceTest {
+public class InstrumentGapServiceTest {
 
     /**
      * Test case for publish by default rule:
@@ -31,7 +31,7 @@ public class GapServiceTest {
         expectResult.setMarket("PB");
         expectResult.setPublishCode("PB_03_2018");
 
-        GapService gapService = new GapServiceIml();
+        InstrumentGapService instrumentGapService = new InstrumentGapServiceIml();
         PublishDto publishDto = new PublishDto();
         publishDto.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, 1));
         publishDto.setDeliveryDate(LocalDate.of(2019, Month.JANUARY, 2));
@@ -39,7 +39,7 @@ public class GapServiceTest {
         publishDto.setInstrumentCode("PRIME");
         publishDto.setLabel("Lead 13 March 2018");
         publishDto.setMarket("PB");
-        gapService.publish(publishDto);
+        instrumentGapService.publish(publishDto);
         ExchangePublishDto exchangePublishDto = new ExchangePublishDto();
         exchangePublishDto.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, 15));
         exchangePublishDto.setDeliveryDate(LocalDate.of(2019, Month.JANUARY, 14));
@@ -49,8 +49,8 @@ public class GapServiceTest {
         exchangePublishDto.setLabel("Lead 13 March 2018");
         exchangePublishDto.setMarket("PB");
         exchangePublishDto.setTradable(false);
-        gapService.publish(exchangePublishDto);
-        Collection<InternalPublishDto> result = gapService.listInternalPublishes();
+        instrumentGapService.publish(exchangePublishDto);
+        Collection<InternalPublishDto> result = instrumentGapService.listInternalPublishes();
         Assert.assertTrue(result.size() == 1);
         Assert.assertEquals(result.iterator().next(), expectResult);
     }
@@ -75,7 +75,7 @@ public class GapServiceTest {
         expectResult.setMarket("PB");
         expectResult.setPublishCode("PB_03_2018");
 
-        GapService gapService = new GapServiceIml();
+        InstrumentGapService instrumentGapService = new InstrumentGapServiceIml();
         PublishDto publishDto = new PublishDto();
         publishDto.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, 1));
         publishDto.setDeliveryDate(LocalDate.of(2019, Month.JANUARY, 2));
@@ -83,8 +83,8 @@ public class GapServiceTest {
         publishDto.setInstrumentCode("LME");
         publishDto.setLabel("Lead 13 March 2018");
         publishDto.setMarket("PB");
-        gapService.publish(publishDto);
-        Collection<InternalPublishDto> result = gapService.listInternalPublishes();
+        instrumentGapService.publish(publishDto);
+        Collection<InternalPublishDto> result = instrumentGapService.listInternalPublishes();
         Assert.assertTrue(result.size() == 1);
         Assert.assertEquals(result.iterator().next(), expectResult);
 
@@ -97,8 +97,8 @@ public class GapServiceTest {
         exchangePublishDto.setLabel("Lead 13 March 2018");
         exchangePublishDto.setMarket("PB");
         exchangePublishDto.setTradable(false);
-        gapService.publish(exchangePublishDto);
-        result = gapService.listInternalPublishes();
+        instrumentGapService.publish(exchangePublishDto);
+        result = instrumentGapService.listInternalPublishes();
         // the PRIME's exchangeCode matches LME's publishCode
         // after merging, there should only be one internal publish
         expectResult.setTradable(false);
@@ -108,7 +108,7 @@ public class GapServiceTest {
         Map<MappingKeyEnum, MappingKeyEnum> rules = new HashMap<MappingKeyEnum, MappingKeyEnum>();
         rules.put(MappingKeyEnum.MARKET, MappingKeyEnum.EXCHANGE_CODE);
         rules.put(MappingKeyEnum.LABEL, MappingKeyEnum.PUBLISH_CODE);
-        gapService.setFlexibleRules(rules);
+        instrumentGapService.setFlexibleRules(rules);
 
         ExchangePublishDto exchangePublishDto2 = new ExchangePublishDto();
         exchangePublishDto2.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, 29));
@@ -119,8 +119,8 @@ public class GapServiceTest {
         exchangePublishDto2.setLabel("Lead 14 March 2018");
         exchangePublishDto2.setMarket("PB");
         exchangePublishDto2.setTradable(true);
-        gapService.publish(exchangePublishDto2);
-        gapService.listInternalPublishes();
+        instrumentGapService.publish(exchangePublishDto2);
+        instrumentGapService.listInternalPublishes();
         expectResult.setTradable(true);
         Assert.assertTrue(result.size() == 1);
         Assert.assertTrue(result.iterator().next().equals(expectResult));
@@ -132,8 +132,8 @@ public class GapServiceTest {
         publishDto2.setInstrumentCode("LME");
         publishDto2.setLabel("Label normal Publish");
         publishDto2.setMarket("PB");
-        gapService.publish(publishDto2);
-        result = gapService.listInternalPublishes();
+        instrumentGapService.publish(publishDto2);
+        result = instrumentGapService.listInternalPublishes();
         expectResult.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, 11));
         expectResult.setDeliveryDate(LocalDate.of(2019, Month.JANUARY, 22));
         Assert.assertTrue(result.size() == 1);
@@ -158,7 +158,7 @@ public class GapServiceTest {
         expectResult.setMarket("PB");
         expectResult.setPublishCode("PB_03_2019");
 
-        GapService gapService = new GapServiceIml();
+        InstrumentGapService instrumentGapService = new InstrumentGapServiceIml();
         PublishDto publishDto = new PublishDto();
         publishDto.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, 1));
         publishDto.setDeliveryDate(LocalDate.of(2019, Month.JANUARY, 2));
@@ -166,8 +166,8 @@ public class GapServiceTest {
         publishDto.setInstrumentCode("LME");
         publishDto.setLabel("Lead 13 March 2019");
         publishDto.setMarket("PB");
-        gapService.publish(publishDto);
-        Collection<InternalPublishDto> result = gapService.listInternalPublishes();
+        instrumentGapService.publish(publishDto);
+        Collection<InternalPublishDto> result = instrumentGapService.listInternalPublishes();
         Assert.assertTrue(result.size() == 1);
         Assert.assertTrue(result.iterator().next().equals(expectResult));
 
@@ -180,15 +180,15 @@ public class GapServiceTest {
         exchangePublishDto.setLabel("Lead 13 April 2019");
         exchangePublishDto.setMarket("PB");
         exchangePublishDto.setTradable(true);
-        gapService.publish(exchangePublishDto);
-        result = gapService.listInternalPublishes();
+        instrumentGapService.publish(exchangePublishDto);
+        result = instrumentGapService.listInternalPublishes();
         // the PRIME's exchangeCode matches LME's publishCode
         // after merging, there should only be one internal publish
         Assert.assertTrue(result.size() == 2);
         // config new flexible rule for key mapping
         Map<MappingKeyEnum, MappingKeyEnum> rules = new HashMap<MappingKeyEnum, MappingKeyEnum>();
         rules.put(MappingKeyEnum.MARKET, MappingKeyEnum.MARKET);
-        gapService.setFlexibleRules(rules);
+        instrumentGapService.setFlexibleRules(rules);
 
         ExchangePublishDto exchangePublishDto2 = new ExchangePublishDto();
         exchangePublishDto2.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, 29));
@@ -199,8 +199,8 @@ public class GapServiceTest {
         exchangePublishDto2.setLabel("Lead 14 March 2019");
         exchangePublishDto2.setMarket("PB");
         exchangePublishDto2.setTradable(false);
-        gapService.publish(exchangePublishDto2);
-        gapService.listInternalPublishes();
+        instrumentGapService.publish(exchangePublishDto2);
+        instrumentGapService.listInternalPublishes();
         Assert.assertTrue(result.size() == 2);
         result.forEach(r -> Assert.assertFalse(r.isTradable()));
         PublishDto publishDto2 = new PublishDto();
@@ -210,8 +210,8 @@ public class GapServiceTest {
         publishDto2.setInstrumentCode("LME");
         publishDto2.setLabel("Label normal Publish");
         publishDto2.setMarket("PB");
-        gapService.publish(publishDto2);
-        result = gapService.listInternalPublishes();
+        instrumentGapService.publish(publishDto2);
+        result = instrumentGapService.listInternalPublishes();
         Assert.assertTrue(result.size() == 2);
         result.forEach(r -> {
             Assert.assertEquals(r.getLastTradingDate(), LocalDate.of(2019, Month.JANUARY, 11));
@@ -228,7 +228,7 @@ public class GapServiceTest {
     @Test
     public void testPublishWithThread() throws InterruptedException {
 
-        GapService gapService = new GapServiceIml();
+        InstrumentGapService instrumentGapService = new InstrumentGapServiceIml();
         Thread thread1 = new Thread() {
             @Override
             public void run() {
@@ -240,16 +240,16 @@ public class GapServiceTest {
                     publishDto.setInstrumentCode("PRIME");
                     publishDto.setLabel("Lead 13 March 2018");
                     publishDto.setMarket("PB");
-                    gapService.publish(publishDto);
+                    instrumentGapService.publish(publishDto);
                     if (i == 5) {
                         Map<MappingKeyEnum, MappingKeyEnum> rules = new HashMap<MappingKeyEnum, MappingKeyEnum>();
                         rules.put(MappingKeyEnum.MARKET, MappingKeyEnum.MARKET);
-                        gapService.setFlexibleRules(rules);
+                        instrumentGapService.setFlexibleRules(rules);
                     }
                     if (i == 11) {
                         Map<MappingKeyEnum, MappingKeyEnum> rules = new HashMap<MappingKeyEnum, MappingKeyEnum>();
                         rules.put(MappingKeyEnum.EXCHANGE_CODE, MappingKeyEnum.PUBLISH_CODE);
-                        gapService.setFlexibleRules(rules);
+                        instrumentGapService.setFlexibleRules(rules);
                     }
                 }
             }
@@ -267,7 +267,7 @@ public class GapServiceTest {
                     exchangePublishDto.setLabel("Lead 13 March 2018");
                     exchangePublishDto.setMarket("PB");
                     exchangePublishDto.setTradable(false);
-                    gapService.publish(exchangePublishDto);
+                    instrumentGapService.publish(exchangePublishDto);
                 }
             }
         };
@@ -276,7 +276,7 @@ public class GapServiceTest {
         thread2.start();
         thread1.join();
         thread2.join();
-        Collection<InternalPublishDto> result = gapService.listInternalPublishes();
+        Collection<InternalPublishDto> result = instrumentGapService.listInternalPublishes();
 
         Assert.assertTrue(result.size() > 0);
     }

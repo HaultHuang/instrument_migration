@@ -10,15 +10,15 @@ import com.bank.instrument.rule.enums.MappingKeyEnum;
 import com.bank.instrument.rule.Rule;
 import com.bank.instrument.rule.RuleFactory;
 import com.bank.instrument.rule.enums.RuleType;
-import com.bank.instrument.service.GapService;
+import com.bank.instrument.service.InstrumentGapService;
 
-public class GapServiceIml implements GapService {
+public class InstrumentGapServiceIml implements InstrumentGapService {
 
 	private ConcurrentLinkedQueue<InternalPublishDto> internalPublishes = new ConcurrentLinkedQueue<>();
 
 	private Rule rule;
 	
-	public GapServiceIml() {
+	public InstrumentGapServiceIml() {
 		rule = RuleFactory.getRule(RuleType.DEFAULT, null);
 	}
 	
