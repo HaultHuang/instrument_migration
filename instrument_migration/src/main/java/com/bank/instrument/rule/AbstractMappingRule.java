@@ -122,12 +122,17 @@ public abstract class AbstractMappingRule implements Rule {
 	}
 
 	@Override
-	public void addMappingRule(MappingKeyEnum publishKey, MappingKeyEnum exchangeKey) {
-		this.mappingRules.put(publishKey, exchangeKey);
+	public void addMappingRule(MappingKeyEnum internalMappingKey, MappingKeyEnum externalMappingKey) {
+		this.mappingRules.put(internalMappingKey, externalMappingKey);
 	}
 
 	@Override
 	public Map<MappingKeyEnum, MappingKeyEnum> getMappingRules() {
 		return mappingRules;
+	}
+
+	@Override
+	public void setMappingRules(Map<MappingKeyEnum, MappingKeyEnum> rules) {
+		this.mappingRules = rules;
 	}
 }

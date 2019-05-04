@@ -15,4 +15,6 @@ public interface Rule {
 	Map<MappingKeyEnum,MappingKeyEnum> getMappingRules();
 	
 	InternalPublishDto matchInternalPublishByRules(BasePublishDto basePublishDto, Collection<InternalPublishDto> internalPublishes); 
+
+	void setMappingRules(Map<MappingKeyEnum, MappingKeyEnum> rules);
 }
