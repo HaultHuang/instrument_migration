@@ -13,5 +13,5 @@ public interface GapService {
 
 	Collection<InternalPublishDto> listInternalPublishes();
 	
-	void setFlexibleRule(Map<MappingKeyEnum,MappingKeyEnum> rules);
+	void setFlexibleRules(Map<MappingKeyEnum,MappingKeyEnum> rules);
 }
