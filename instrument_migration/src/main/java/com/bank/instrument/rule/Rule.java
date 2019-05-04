@@ -6,12 +6,13 @@ import java.util.Map;
 
 import com.bank.instrument.dto.InternalPublishDto;
 import com.bank.instrument.dto.base.BasePublishDto;
+import com.bank.instrument.rule.enums.MappingKeyEnum;
 
 public interface Rule {
 
 	void publishByRules(BasePublishDto basePublishDto, Collection<InternalPublishDto> internalPublishes);
 	
-	void addMappingRule(MappingKeyEnum publishKey,MappingKeyEnum exchangeKey);
+	void addMappingRule(MappingKeyEnum publishKey, MappingKeyEnum exchangeKey);
 	
 	Map<MappingKeyEnum,MappingKeyEnum> getMappingRules();
 

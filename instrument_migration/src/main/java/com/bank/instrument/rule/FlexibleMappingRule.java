@@ -1,10 +1,22 @@
 package com.bank.instrument.rule;
 
-import java.util.Map;
 
 public class FlexibleMappingRule extends AbstractMappingRule {
 
-	public FlexibleMappingRule(Map<MappingKeyEnum, MappingKeyEnum> mappingRules) {
-		setMappingRules(mappingRules);
-	}
+    private static FlexibleMappingRule flexibleMappingRule = null;
+
+    private FlexibleMappingRule() {
+
+    }
+
+    public static FlexibleMappingRule getInstance() {
+        if (flexibleMappingRule == null) {
+            synchronized (DefaultMappingRule.class) {
+                if (flexibleMappingRule == null) {
+                    flexibleMappingRule = new FlexibleMappingRule();
+                }
+            }
+        }
+        return flexibleMappingRule;
+    }
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.bank.instrument.dto.InternalPublishDto;
 import com.bank.instrument.dto.base.BasePublishDto;
-import com.bank.instrument.rule.MappingKeyEnum;
+import com.bank.instrument.rule.enums.MappingKeyEnum;
 
 public interface GapService {
 

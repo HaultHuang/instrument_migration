@@ -1,4 +1,4 @@
-package com.bank.instrument.rule;
+package com.bank.instrument.rule.enums;
 
 public enum RuleType {
 

@@ -4,18 +4,19 @@ import com.bank.instrument.dto.ExchangePublishDto;
 import com.bank.instrument.dto.InternalPublishDto;
 import com.bank.instrument.dto.PublishDto;
 import com.bank.instrument.dto.base.BasePublishDto;
+import com.bank.instrument.rule.enums.MappingKeyEnum;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public abstract class AbstractMappingRule implements Rule {
 
-    private Map<MappingKeyEnum, MappingKeyEnum> mappingRules = new HashMap<>();
+    private Map<MappingKeyEnum, MappingKeyEnum> mappingRules = new ConcurrentHashMap<>();
 
     /**
      * publish external publish into internal
@@ -28,11 +29,11 @@ public abstract class AbstractMappingRule implements Rule {
         // match existing internal publishes by rules
         List<InternalPublishDto> existInternalPublishDtos = matchInternalPublishByRules(externalPublishDto, internalPublishes);
         // merge external publish dto into internal by rules
-        if(!existInternalPublishDtos.isEmpty()) {
+        if (!existInternalPublishDtos.isEmpty()) {
             existInternalPublishDtos.forEach(existInternalPublishDto ->
                     mergeToInternalPublishes(externalPublishDto, internalPublishes, existInternalPublishDto)
             );
-        }else{
+        } else {
             mergeToInternalPublishes(externalPublishDto, internalPublishes, null);
         }
     }
@@ -77,6 +78,13 @@ public abstract class AbstractMappingRule implements Rule {
         }
     }
 
+    /**
+     * Match all internal publishes that meet with the rules
+     *
+     * @param externalPublishDto
+     * @param internalPublishes
+     * @return the list of internal publishes
+     */
     @Override
     public List<InternalPublishDto> matchInternalPublishByRules(BasePublishDto externalPublishDto,
                                                                 Collection<InternalPublishDto> internalPublishes) {
@@ -127,6 +135,13 @@ public abstract class AbstractMappingRule implements Rule {
         return allRulesMatched;
     }
 
+    /**
+     * Get external publish's mapping key by rule's key
+     *
+     * @param basePublishDto
+     * @param externalKey
+     * @return the mapping key's value
+     */
     private String getExternalMappingKey(BasePublishDto basePublishDto, String externalKey) {
         String externalMappingKey = null;
         try {

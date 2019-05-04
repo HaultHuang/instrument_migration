@@ -1,10 +1,9 @@
-package com.bank.instrument;
+package com.bank.instrument.service;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.bank.instrument.dto.InternalPublishDto;
@@ -13,8 +12,7 @@ import org.junit.Test;
 
 import com.bank.instrument.dto.ExchangePublishDto;
 import com.bank.instrument.dto.PublishDto;
-import com.bank.instrument.rule.MappingKeyEnum;
-import com.bank.instrument.service.GapService;
+import com.bank.instrument.rule.enums.MappingKeyEnum;
 import com.bank.instrument.service.impl.GapServiceIml;
 
 public class GapServiceTest {
@@ -154,8 +152,8 @@ public class GapServiceTest {
     public void testPublishWithFlexibleRuleWithSeveralMatched() {
         InternalPublishDto expectResult = new InternalPublishDto();
         expectResult.setTradable(true);
-        expectResult.setDeliveryDate(LocalDate.of(2019, Month.JANUARY, 2));
         expectResult.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, 1));
+        expectResult.setDeliveryDate(LocalDate.of(2019, Month.JANUARY, 2));
         expectResult.setLabel("Lead 13 March 2019");
         expectResult.setMarket("PB");
         expectResult.setPublishCode("PB_03_2019");
@@ -234,7 +232,7 @@ public class GapServiceTest {
         Thread thread1 = new Thread() {
             @Override
             public void run() {
-                for (int i = 1; i < 3; i++) {
+                for (int i = 1; i < 13; i++) {
                     PublishDto publishDto = new PublishDto();
                     publishDto.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, i));
                     publishDto.setDeliveryDate(LocalDate.of(2019, Month.JANUARY, i + 1));
@@ -243,13 +241,23 @@ public class GapServiceTest {
                     publishDto.setLabel("Lead 13 March 2018");
                     publishDto.setMarket("PB");
                     gapService.publish(publishDto);
+                    if (i == 5) {
+                        Map<MappingKeyEnum, MappingKeyEnum> rules = new HashMap<MappingKeyEnum, MappingKeyEnum>();
+                        rules.put(MappingKeyEnum.MARKET, MappingKeyEnum.MARKET);
+                        gapService.setFlexibleRules(rules);
+                    }
+                    if (i == 11) {
+                        Map<MappingKeyEnum, MappingKeyEnum> rules = new HashMap<MappingKeyEnum, MappingKeyEnum>();
+                        rules.put(MappingKeyEnum.EXCHANGE_CODE, MappingKeyEnum.PUBLISH_CODE);
+                        gapService.setFlexibleRules(rules);
+                    }
                 }
             }
         };
         Thread thread2 = new Thread() {
             @Override
             public void run() {
-                for (int i = 1; i < 3; i++) {
+                for (int i = 1; i < 13; i++) {
                     ExchangePublishDto exchangePublishDto = new ExchangePublishDto();
                     exchangePublishDto.setLastTradingDate(LocalDate.of(2019, Month.JANUARY, i + 15));
                     exchangePublishDto.setDeliveryDate(LocalDate.of(2019, Month.JANUARY, i + 14));
@@ -264,20 +272,12 @@ public class GapServiceTest {
             }
         };
 
-        Thread t3 = new Thread() {
-            @Override
-            public void run() {
-                for (int i = 1; i < 10; i++) {
-                    gapService.listInternalPublishes();
-                }
-            }
-        };
-        t3.start();
         thread1.start();
         thread2.start();
         thread1.join();
         thread2.join();
-        t3.join();
-        gapService.listInternalPublishes();
+        Collection<InternalPublishDto> result = gapService.listInternalPublishes();
+
+        Assert.assertTrue(result.size() > 0);
     }
 }

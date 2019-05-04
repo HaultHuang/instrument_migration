@@ -6,10 +6,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.bank.instrument.dto.InternalPublishDto;
 import com.bank.instrument.dto.base.BasePublishDto;
-import com.bank.instrument.rule.MappingKeyEnum;
+import com.bank.instrument.rule.enums.MappingKeyEnum;
 import com.bank.instrument.rule.Rule;
 import com.bank.instrument.rule.RuleFactory;
-import com.bank.instrument.rule.RuleType;
+import com.bank.instrument.rule.enums.RuleType;
 import com.bank.instrument.service.GapService;
 
 public class GapServiceIml implements GapService {
