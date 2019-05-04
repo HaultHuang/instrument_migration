@@ -7,7 +7,7 @@ import com.bank.instrument.dto.base.BasePublishDto;
 
 public interface GapService {
 
-	void publish(BasePublishDto basePubicDto);
+	void publish(BasePublishDto basePublishDto);
 
 	Collection<InternalPublishDto> listInternalPublishes();
 }

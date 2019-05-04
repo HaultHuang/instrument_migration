@@ -8,7 +8,7 @@ import com.bank.instrument.dto.base.BasePublishDto;
 
 public interface Rule {
 
-	void publish(BasePublishDto basePublishDto, Collection<InternalPublishDto> internalPublishMap);
+	void publish(BasePublishDto basePublishDto, Collection<InternalPublishDto> internalPublishes);
 	
 	void addMappingRule(MappingKeyEnum publishKey,MappingKeyEnum exchangeKey);
 	
