@@ -3,13 +3,7 @@ package com.bank.instrument.dto.base;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-/**
- * Base publish dto
- * 
- * @author HuangHao
- *
- */
-public class BasePublishDto implements Serializable{
+public class BasePublishDto implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 5147696293720330609L;
 
@@ -107,5 +101,16 @@ public class BasePublishDto implements Serializable{
 	 */
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	@Override
+	public Object clone() {
+		Object clone = null;
+		try {
+			clone = super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return clone;
 	}
 }
