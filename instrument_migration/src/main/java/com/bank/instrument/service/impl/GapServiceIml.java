@@ -34,7 +34,7 @@ public class GapServiceIml implements GapService {
 	}
 	
 	@Override
-	public void addFlexibleRule(Map<MappingKeyEnum, MappingKeyEnum> rules) {
+	public void setFlexibleRule(Map<MappingKeyEnum, MappingKeyEnum> rules) {
 		rule = RuleFactory.getRule(RuleType.FLEXIBLE, rules);
 	}
 }

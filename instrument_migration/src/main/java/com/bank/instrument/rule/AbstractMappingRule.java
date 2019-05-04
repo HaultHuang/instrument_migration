@@ -83,6 +83,14 @@ public abstract class AbstractMappingRule implements Rule {
 				Object internalMapKey = internalMethod.invoke(internalPublishDto);
 				Object externalMapKey = getExternalMappingKey(basePublishDto, externalKey, internalClazz,
 						internalMethod);
+				// if there is a mapping rule for exchange publish
+				// then it doesn't fit for normal publish
+				// so the externalMappingKey might not be found
+				// in that way, mark externalMappingkey as null
+				// and ignore the mapping rule
+				if (externalMapKey == null) {
+					continue;
+				}
 				if (!(internalMapKey != null && externalMapKey != null && internalMapKey.equals(externalMapKey))) {
 					allRulesMatched = false;
 					break;
@@ -96,27 +104,29 @@ public abstract class AbstractMappingRule implements Rule {
 	}
 
 	private String getExternalMappingKey(BasePublishDto basePublishDto, String externalKey, Class<?> internalClazz,
-			Method internalMethod)
-			throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+			Method internalMethod) {
 		String externalMappingkey = null;
-		if (basePublishDto instanceof ExchangePublishDto) {
-			Class<?> externalClazz = Class.forName(ExchangePublishDto.class.getName());
-			Method externalMethod = null;
-			try {
-				externalMethod = externalClazz.getDeclaredMethod(externalKey);
-			} catch (Exception e) {
-				externalMethod = externalClazz.getSuperclass().getDeclaredMethod(externalKey);
+		try {
+			if (basePublishDto instanceof ExchangePublishDto) {
+				Class<?> externalClazz = Class.forName(ExchangePublishDto.class.getName());
+				Method externalMethod = null;
+				try {
+					externalMethod = externalClazz.getDeclaredMethod(externalKey);
+				} catch (Exception e) {
+					externalMethod = externalClazz.getSuperclass().getDeclaredMethod(externalKey);
+				}
+				externalMappingkey = (String) externalMethod.invoke((ExchangePublishDto) basePublishDto);
+			} else if (basePublishDto instanceof PublishDto) {
+				Class<?> externalClazz = Class.forName(ExchangePublishDto.class.getName());
+				Method externalMethod = null;
+				try {
+					externalMethod = externalClazz.getDeclaredMethod(externalKey);
+				} catch (Exception e) {
+					externalMethod = externalClazz.getSuperclass().getDeclaredMethod(externalKey);
+				}
+				externalMappingkey = (String) externalMethod.invoke((ExchangePublishDto) basePublishDto);
 			}
-			externalMappingkey = (String) externalMethod.invoke((ExchangePublishDto) basePublishDto);
-		} else if (basePublishDto instanceof PublishDto) {
-			Class<?> externalClazz = Class.forName(ExchangePublishDto.class.getName());
-			Method externalMethod = null;
-			try {
-				externalMethod = externalClazz.getDeclaredMethod(externalKey);
-			} catch (Exception e) {
-				externalMethod = externalClazz.getSuperclass().getDeclaredMethod(externalKey);
-			}
-			externalMappingkey = (String) externalMethod.invoke((ExchangePublishDto) basePublishDto);
+		} catch (Exception e) {
 		}
 		return externalMappingkey;
 	}
