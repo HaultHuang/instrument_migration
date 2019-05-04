@@ -24,17 +24,16 @@ public class GapServiceIml implements GapService {
 	
 	@Override
 	public void publish(BasePublishDto basePublishDto) {
-		rule.publish(basePublishDto, internalPublishes);
+		rule.publishByRules(basePublishDto, internalPublishes);
 	}
 
 	@Override
 	public Collection<InternalPublishDto> listInternalPublishes() {
-		internalPublishes.stream().forEach(p->System.out.println(p));
 		return internalPublishes;
 	}
 	
 	@Override
-	public void setFlexibleRules(Map<MappingKeyEnum, MappingKeyEnum> rules) {
-		rule = RuleFactory.getRule(RuleType.FLEXIBLE, rules);
+	public void setFlexibleRules(Map<MappingKeyEnum, MappingKeyEnum> mappingRules) {
+		rule = RuleFactory.getRule(RuleType.FLEXIBLE, mappingRules);
 	}
 }

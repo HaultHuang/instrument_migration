@@ -12,15 +12,6 @@ public enum MappingKeyEnum {
 		this.key=key;
 	}
 	
-	public static MappingKeyEnum getMappingKey(String key) {
-		for(MappingKeyEnum mappingKey:MappingKeyEnum.values()) {
-			if(mappingKey.getKey().equals(key)) {
-				return mappingKey;
-			}
-		}
-		return null;
-	}
-	
 	public String getKey() {
 		return this.key;
 	}

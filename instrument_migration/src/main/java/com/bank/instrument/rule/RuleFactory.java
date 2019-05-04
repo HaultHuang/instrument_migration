@@ -5,7 +5,7 @@ import java.util.Map;
 public class RuleFactory {
 
 	public static Rule getRule(RuleType ruleType, Map<MappingKeyEnum, MappingKeyEnum> rules) {
-		Rule rule = null;
+		Rule rule;
 		switch (ruleType) {
 		case FLEXIBLE:
 			rule = new FlexibleMappingRule(rules);

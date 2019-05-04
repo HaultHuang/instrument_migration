@@ -8,19 +8,45 @@ import com.bank.instrument.dto.base.BasePublishDto;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public abstract class AbstractMappingRule implements Rule {
 
     private Map<MappingKeyEnum, MappingKeyEnum> mappingRules = new HashMap<>();
 
+    /**
+     * publish external publish into internal
+     *
+     * @param externalPublishDto
+     * @param internalPublishes
+     */
     @Override
-    public void publish(BasePublishDto basePublishDto, Collection<InternalPublishDto> internalPublishes) {
+    public void publishByRules(BasePublishDto externalPublishDto, Collection<InternalPublishDto> internalPublishes) {
         // match existing internal publishes by rules
-        InternalPublishDto existInternalPublishDto = matchInternalPublishByRules(basePublishDto, internalPublishes);
-        if (basePublishDto instanceof ExchangePublishDto) {
-            ExchangePublishDto exchangePublishDto = (ExchangePublishDto) basePublishDto;
+        List<InternalPublishDto> existInternalPublishDtos = matchInternalPublishByRules(externalPublishDto, internalPublishes);
+        // merge external publish dto into internal by rules
+        if(!existInternalPublishDtos.isEmpty()) {
+            existInternalPublishDtos.forEach(existInternalPublishDto ->
+                    mergeToInternalPublishes(externalPublishDto, internalPublishes, existInternalPublishDto)
+            );
+        }else{
+            mergeToInternalPublishes(externalPublishDto, internalPublishes, null);
+        }
+    }
+
+    /**
+     * Merge external publish into internal
+     *
+     * @param externalPublishDto
+     * @param internalPublishes
+     * @param existInternalPublishDto
+     */
+    private void mergeToInternalPublishes(BasePublishDto externalPublishDto, Collection<InternalPublishDto> internalPublishes, InternalPublishDto existInternalPublishDto) {
+        if (externalPublishDto instanceof ExchangePublishDto) {
+            ExchangePublishDto exchangePublishDto = (ExchangePublishDto) externalPublishDto;
             if (existInternalPublishDto != null) {
                 existInternalPublishDto.setTradable(exchangePublishDto.isTradable());
             } else {
@@ -33,8 +59,8 @@ public abstract class AbstractMappingRule implements Rule {
                 internalPublishDto.setPublishCode(exchangePublishDto.getPublishCode());
                 internalPublishes.add(internalPublishDto);
             }
-        } else if (basePublishDto instanceof PublishDto) {
-            PublishDto publishDto = (PublishDto) basePublishDto;
+        } else if (externalPublishDto instanceof PublishDto) {
+            PublishDto publishDto = (PublishDto) externalPublishDto;
             if (existInternalPublishDto != null) {
                 existInternalPublishDto.setDeliveryDate(publishDto.getDeliveryDate());
                 existInternalPublishDto.setLastTradingDate(publishDto.getLastTradingDate());
@@ -52,20 +78,20 @@ public abstract class AbstractMappingRule implements Rule {
     }
 
     @Override
-    public InternalPublishDto matchInternalPublishByRules(BasePublishDto basePublishDto,
-                                                          Collection<InternalPublishDto> internalPublishes) {
-        return internalPublishes.stream().filter(internalPublishDto -> ruleFilter(basePublishDto, internalPublishDto))
-                .findFirst().orElse(null);
+    public List<InternalPublishDto> matchInternalPublishByRules(BasePublishDto externalPublishDto,
+                                                                Collection<InternalPublishDto> internalPublishes) {
+        return internalPublishes.stream().filter(internalPublishDto -> ruleFilter(externalPublishDto, internalPublishDto))
+                .collect(Collectors.toList());
     }
 
     /**
-     * filter
+     * filter internal publishes by mapping rule
      *
-     * @param basePublishDto
-     * @param internalPublishDto
-     * @return
+     * @param externalPublishDto the external publish dto
+     * @param internalPublishDto the internal publish dto
+     * @return if the basePublishDto match any internal publishes
      */
-    private boolean ruleFilter(BasePublishDto basePublishDto, InternalPublishDto internalPublishDto) {
+    private boolean ruleFilter(BasePublishDto externalPublishDto, InternalPublishDto internalPublishDto) {
         Map<MappingKeyEnum, MappingKeyEnum> rules = getMappingRules();
         boolean allRulesMatched = true;
         for (Entry<MappingKeyEnum, MappingKeyEnum> ruleEntry : rules.entrySet()) {
@@ -80,12 +106,11 @@ public abstract class AbstractMappingRule implements Rule {
                     internalMethod = internalClazz.getSuperclass().getDeclaredMethod(internalKey);
                 }
                 Object internalMapKey = internalMethod.invoke(internalPublishDto);
-                Object externalMapKey = getExternalMappingKey(basePublishDto, externalKey, internalClazz,
-                        internalMethod);
-                // if there is a mapping rule for exchange publish
-                // then it doesn't fit for normal publish
+                Object externalMapKey = getExternalMappingKey(externalPublishDto, externalKey);
+                // if there is a mapping rule for exchange publishByRules
+                // then it doesn't fit for normal publishByRules(for example: exchangeCode)
                 // so the externalMappingKey might not be found
-                // in that way, mark externalMappingkey as null
+                // in that way, mark externalMappingKey as null
                 // and ignore the mapping rule
                 if (externalMapKey == null) {
                     continue;
@@ -102,19 +127,18 @@ public abstract class AbstractMappingRule implements Rule {
         return allRulesMatched;
     }
 
-    private String getExternalMappingKey(BasePublishDto basePublishDto, String externalKey, Class<?> internalClazz,
-                                         Method internalMethod) {
+    private String getExternalMappingKey(BasePublishDto basePublishDto, String externalKey) {
         String externalMappingKey = null;
         try {
             if (basePublishDto instanceof ExchangePublishDto) {
                 Class<?> externalClazz = Class.forName(ExchangePublishDto.class.getName());
-                Method externalMethod = null;
+                Method externalMethod;
                 try {
                     externalMethod = externalClazz.getDeclaredMethod(externalKey);
                 } catch (Exception e) {
                     externalMethod = externalClazz.getSuperclass().getDeclaredMethod(externalKey);
                 }
-                externalMappingKey = (String) externalMethod.invoke((ExchangePublishDto) basePublishDto);
+                externalMappingKey = (String) externalMethod.invoke(basePublishDto);
             } else if (basePublishDto instanceof PublishDto) {
                 Class<?> externalClazz = Class.forName(ExchangePublishDto.class.getName());
                 Method externalMethod = null;
@@ -123,7 +147,7 @@ public abstract class AbstractMappingRule implements Rule {
                 } catch (Exception e) {
                     externalMethod = externalClazz.getSuperclass().getDeclaredMethod(externalKey);
                 }
-                externalMappingKey = (String) externalMethod.invoke((ExchangePublishDto) basePublishDto);
+                externalMappingKey = (String) externalMethod.invoke(basePublishDto);
             }
         } catch (Exception e) {
         }
@@ -141,7 +165,7 @@ public abstract class AbstractMappingRule implements Rule {
     }
 
     @Override
-    public void setMappingRules(Map<MappingKeyEnum, MappingKeyEnum> rules) {
-        this.mappingRules = rules;
+    public void setMappingRules(Map<MappingKeyEnum, MappingKeyEnum> mappingRules) {
+        this.mappingRules = mappingRules;
     }
 }

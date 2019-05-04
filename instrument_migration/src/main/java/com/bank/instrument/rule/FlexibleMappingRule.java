@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class FlexibleMappingRule extends AbstractMappingRule {
 
-	public FlexibleMappingRule(Map<MappingKeyEnum, MappingKeyEnum> rules) {
-		setMappingRules(rules);
+	public FlexibleMappingRule(Map<MappingKeyEnum, MappingKeyEnum> mappingRules) {
+		setMappingRules(mappingRules);
 	}
 }
